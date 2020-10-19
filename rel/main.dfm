@@ -16,53 +16,59 @@ object Form1: TForm1
   TextHeight = 13
   object DBGrid1: TDBGrid
     Left = 0
-    Top = 41
+    Top = 65
     Width = 774
-    Height = 279
+    Height = 434
     Align = alClient
     DataSource = DataSource1
-    DrawingStyle = gdsClassic
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+    ReadOnly = True
     TabOrder = 0
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
+    Visible = False
     Columns = <
       item
         Expanded = False
+        FieldName = 'symbol1'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'symbol2'
+        Visible = True
+      end
+      item
+        Expanded = False
         FieldName = 'symbol'
-        Width = 115
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'high'
-        Width = 97
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'low'
-        Width = 75
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'volume'
-        Width = 100
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'quoteVolume'
-        Width = 108
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'percentChange'
-        Width = 90
         Visible = True
       end
       item
@@ -71,23 +77,13 @@ object Form1: TForm1
         Visible = True
       end>
   end
-  object ListBox1: TListBox
-    Left = 0
-    Top = 320
-    Width = 774
-    Height = 179
-    Align = alBottom
-    ItemHeight = 13
-    TabOrder = 1
-    Visible = False
-  end
   object Panel1: TPanel
     Left = 0
     Top = 0
     Width = 774
-    Height = 41
+    Height = 65
     Align = alTop
-    TabOrder = 2
+    TabOrder = 1
     object Label1: TLabel
       Left = 16
       Top = 14
@@ -120,45 +116,179 @@ object Form1: TForm1
       OnClick = Button1Click
     end
   end
+  object cxGrid1: TcxGrid
+    Left = 0
+    Top = 65
+    Width = 774
+    Height = 434
+    Align = alClient
+    TabOrder = 2
+    LookAndFeel.Kind = lfStandard
+    object cxGrid1DBBandedTableView1: TcxGridDBBandedTableView
+      Navigator.Buttons.CustomButtons = <>
+      DataController.DataSource = DataSource1
+      DataController.Summary.DefaultGroupSummaryItems = <>
+      DataController.Summary.FooterSummaryItems = <>
+      DataController.Summary.SummaryGroups = <>
+      OptionsSelection.ShowCheckBoxesDynamically = True
+      OptionsView.Indicator = True
+      Bands = <
+        item
+        end>
+      object cxGrid1DBBandedTableView1symbol1: TcxGridDBBandedColumn
+        DataBinding.FieldName = 'symbol1'
+        Width = 100
+        Position.BandIndex = 0
+        Position.ColIndex = 0
+        Position.RowIndex = 0
+      end
+      object cxGrid1DBBandedTableView1symbol2: TcxGridDBBandedColumn
+        DataBinding.FieldName = 'symbol2'
+        Width = 100
+        Position.BandIndex = 0
+        Position.ColIndex = 1
+        Position.RowIndex = 0
+      end
+      object cxGrid1DBBandedTableView1high: TcxGridDBBandedColumn
+        DataBinding.FieldName = 'high'
+        Width = 100
+        Position.BandIndex = 0
+        Position.ColIndex = 2
+        Position.RowIndex = 0
+      end
+      object cxGrid1DBBandedTableView1low: TcxGridDBBandedColumn
+        DataBinding.FieldName = 'low'
+        Width = 100
+        Position.BandIndex = 0
+        Position.ColIndex = 3
+        Position.RowIndex = 0
+      end
+      object cxGrid1DBBandedTableView1volume: TcxGridDBBandedColumn
+        DataBinding.FieldName = 'volume'
+        Width = 100
+        Position.BandIndex = 0
+        Position.ColIndex = 4
+        Position.RowIndex = 0
+      end
+      object cxGrid1DBBandedTableView1quoteVolume: TcxGridDBBandedColumn
+        DataBinding.FieldName = 'quoteVolume'
+        Width = 100
+        Position.BandIndex = 0
+        Position.ColIndex = 5
+        Position.RowIndex = 0
+      end
+      object cxGrid1DBBandedTableView1percentChange: TcxGridDBBandedColumn
+        DataBinding.FieldName = 'percentChange'
+        Width = 100
+        Position.BandIndex = 0
+        Position.ColIndex = 6
+        Position.RowIndex = 0
+      end
+      object cxGrid1DBBandedTableView1updatedAt: TcxGridDBBandedColumn
+        DataBinding.FieldName = 'updatedAt'
+        Width = 100
+        Position.BandIndex = 0
+        Position.ColIndex = 7
+        Position.RowIndex = 0
+      end
+    end
+    object cxGrid1Level1: TcxGridLevel
+      GridView = cxGrid1DBBandedTableView1
+    end
+  end
   object FDConnection1: TFDConnection
     Params.Strings = (
-      'Database=rel.db'
       'OpenMode=ReadWrite'
       'LockingMode=Normal'
       'DriverID=SQLite')
     LoginPrompt = False
-    Left = 24
-    Top = 336
+    Left = 176
+    Top = 8
   end
   object DataSource1: TDataSource
     AutoEdit = False
     DataSet = main_table
-    Left = 104
-    Top = 336
+    Left = 240
+    Top = 8
   end
   object FDQuery1: TFDQuery
     Connection = FDConnection1
-    Left = 176
-    Top = 336
+    Left = 304
+    Top = 8
   end
   object FDQuery2: TFDQuery
     Connection = FDConnection1
-    Left = 248
-    Top = 336
+    Left = 360
+    Top = 8
   end
   object main_table: TFDQuery
     IndexFieldNames = 'symbol'
     Connection = FDConnection1
     SQL.Strings = (
-      'select cast(symbol as char(50)) as symbol,'
+      'select '
+      'SUBSTR(cast(symbol as char(50)), 1, '
+      'INSTR( cast(symbol as char(50)),'#39'-'#39')-1'
+      ') '
+      'AS symbol1,'
+      ''
+      'SUBSTR(cast(symbol as char(50)),  '
+      'INSTR( cast(symbol as char(50)),'#39'-'#39')+1,40'
+      ') '
+      'AS symbol2,'
+      'cast(symbol as char(50)) as symbol,'
       'cast(high as char(50)) as high,'
       'cast(low as char(50)) as low,'
       'cast(volume as char(50)) as volume,'
       'cast(quoteVolume as char(50)) as quoteVolume,'
-      'cast(percentChange as char(50)) as percentChange,'
+      'cast(percentChange as double) as percentChange,'
       'cast(updatedAt as char(50)) as updatedAt'
       ' from main')
-    Left = 520
-    Top = 336
+    Left = 424
+    Top = 8
+  end
+  object tmain: TFDTable
+    IndexFieldNames = 'symbol'
+    Connection = FDConnection1
+    UpdateOptions.UpdateTableName = 'main'
+    TableName = 'main'
+    Left = 480
+    Top = 8
+    object tmainsymbol: TWideMemoField
+      FieldName = 'symbol'
+      Origin = 'symbol'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      BlobType = ftWideMemo
+    end
+    object tmainhigh: TWideMemoField
+      FieldName = 'high'
+      Origin = 'high'
+      BlobType = ftWideMemo
+    end
+    object tmainlow: TWideMemoField
+      FieldName = 'low'
+      Origin = 'low'
+      BlobType = ftWideMemo
+    end
+    object tmainvolume: TWideMemoField
+      FieldName = 'volume'
+      Origin = 'volume'
+      BlobType = ftWideMemo
+    end
+    object tmainquoteVolume: TWideMemoField
+      FieldName = 'quoteVolume'
+      Origin = 'quoteVolume'
+      BlobType = ftWideMemo
+    end
+    object tmainpercentChange: TWideMemoField
+      FieldName = 'percentChange'
+      Origin = 'percentChange'
+      BlobType = ftWideMemo
+    end
+    object tmainupdatedAt: TWideMemoField
+      FieldName = 'updatedAt'
+      Origin = 'updatedAt'
+      BlobType = ftWideMemo
+    end
   end
 end

@@ -2,7 +2,7 @@ program rel;
 
 uses
   Vcl.Forms,
-  main in '..\main.pas' {Form1} ,
+  main in 'main.pas' {Form1},
   uLkJSON in 'uLkJSON.pas';
 
 {$R *.res}
