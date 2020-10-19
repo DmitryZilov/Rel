@@ -62,6 +62,7 @@ type
     fieldstring: string;
     sql_insert, sql_update: tstringlist;
     js: TlkJSONbase; //контейнер json
+    expanded_keys:tstringlist;
   public
     { Public declarations }
     procedure ModifyRecords();
@@ -220,13 +221,23 @@ var
   i: integer;
   loc: string;
 begin
+    loc:='';
 //корректно сохраняет в реестр
   cxGrid1DBBandedTableView1.StoreToRegistry('cxGrid1DBBandedTableView1',true);
+  expanded_keys.Clear;
+  //сохраним в файл развернуьые ветки
+  for I := 0 to cxGrid1DBBandedTableView1.ViewData.RowCount-1 do
+   if cxGrid1DBBandedTableView1.ViewData.Rows[i].Expanded=true then
+     expanded_keys.Add(cxGrid1DBBandedTableView1.ViewData.Rows[i].Values[0]);
+  expanded_keys.SaveToFile(ExtractFilePath(ParamStr(0)) + 'exp_keys.ini');
 //сохранить текущую запись
   F := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'rel.ini');
-  loc := main_table.fieldbyname(key).asString;
+  //если стоит на родителе, позиция не пришется
+  if cxGrid1DBBandedTableView1.Controller.FocusedRow.Expandable=false then
+   loc := main_table.fieldbyname(key).asString;
   F.WriteString('loc', 'key', loc);
   F.WriteInteger('loc', 'RI', cxGrid1DBBandedTableView1.Controller.TopRecordIndex);
+
   F.Free;
 end;
 
@@ -234,16 +245,24 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 var
   F: TIniFile;
-  i: integer;
+  i,j: integer;
   loc: string;
 begin
   cxGrid1DBBandedTableView1.RestoreFromRegistry('cxGrid1DBBandedTableView1');
+  //ветки развернем
+  expanded_keys.loadfromfile(ExtractFilePath(ParamStr(0)) + 'exp_keys.ini');
+  for I := 0 to expanded_keys.Count-1 do
+   for j := 0 to cxGrid1DBBandedTableView1.ViewData.RowCount-1 do
+    if cxGrid1DBBandedTableView1.ViewData.Rows[j].Values[0]=expanded_keys[i] then
+      cxGrid1DBBandedTableView1.ViewData.Rows[j].Expand(false);
   F := TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'rel.ini');
   loc := F.ReadString('loc', 'key', '');
   //встать на запись
   cxGrid1DBBandedTableView1.Controller.TopRecordIndex:=F.ReadInteger('loc', 'RI', 0);
-  cxGrid1DBBandedTableView1.Controller.FocusedRow.Selected:=true;
-  main_table.Locate(key, loc, []);
+  cxGrid1DBBandedTableView1.DataController.KeyFieldNames:=key;
+  cxGrid1DBBandedTableView1.DataController.LocateByKey(loc);
+  cxgrid1.SetFocus;
+  //cxGrid1DBBandedTableView1.Controller.FocusedRow.Selected:=true;
   F.Free;
 end;
 
@@ -261,6 +280,7 @@ begin
   tmain.Active:=true;
   // ключ таблицы всегда нулевой, потом может измениться
   key := tmain.FieldDefs.Items[0].Name;
+  expanded_keys:= tstringlist.Create;
   sql_insert := tstringlist.Create;
   sql_update := tstringlist.Create;
   // сразу запускаем

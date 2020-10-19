@@ -130,6 +130,12 @@ object Form1: TForm1
       DataController.Summary.DefaultGroupSummaryItems = <>
       DataController.Summary.FooterSummaryItems = <>
       DataController.Summary.SummaryGroups = <>
+      OptionsData.CancelOnExit = False
+      OptionsData.Deleting = False
+      OptionsData.DeletingConfirmation = False
+      OptionsData.Editing = False
+      OptionsData.Inserting = False
+      OptionsSelection.CellSelect = False
       OptionsSelection.ShowCheckBoxesDynamically = True
       OptionsView.Indicator = True
       Bands = <
@@ -201,6 +207,7 @@ object Form1: TForm1
       'OpenMode=ReadWrite'
       'LockingMode=Normal'
       'DriverID=SQLite')
+    Connected = True
     LoginPrompt = False
     Left = 176
     Top = 8
